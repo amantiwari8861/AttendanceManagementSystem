@@ -7,17 +7,19 @@ public class User {
 	private String name;
 	private String email;
 	private Long phoneno;
+	private String password;
 	private Attendance attendance;
 	
 	public User() {
 		super();
 	}
-	public User(int userId, String name, String email, Long phoneno) {
+	public User(int userId, String name, String email, Long phoneno,String password) {
 		super();
 		this.userId = userId;
 		this.name = name;
 		this.email = email;
 		this.phoneno = phoneno;
+		this.password=password;
 	}
 	
  User(int userId, String name, String email, Long phoneno, Attendance attendance) {
@@ -59,9 +61,16 @@ public class User {
 	public void setAttendance(Attendance attendance) {
 		this.attendance = attendance;
 	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
 	@Override
 	public String toString() {
-		return "User [userId=" + userId + ", name=" + name + ", email=" + email + ", phoneno=" + phoneno
-				+ ", attendance=" + attendance + "]";
+		return "User [userId=" + userId + ", name=" + name + ", email=" + email + ", phoneno=" + phoneno + ", password="
+				+ password + ", attendance=" + attendance + "]";
 	}
+	
 }

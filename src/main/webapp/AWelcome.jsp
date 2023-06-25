@@ -1,3 +1,5 @@
+<%@page errorPage="error.jsp" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -38,7 +40,9 @@
     <%
     
     	if(session.getAttribute("role") != "Admin"){
-    		response.sendRedirect("index.jsp");
+    		
+    		application.setAttribute("errMsg","Pls Login First as Admin !!");
+    		request.getRequestDispatcher("index.jsp").forward(request,response);
     	}
     %>
 </head>

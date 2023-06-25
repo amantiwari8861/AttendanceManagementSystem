@@ -3,9 +3,12 @@
 <%@page import="java.sql.PreparedStatement"%>
 <%@page import="java.sql.Connection"%>
 <%@page import="com.nobious.dao.impl.ConnectionProvider"%>
+<%@page errorPage="../error.jsp" %>
 <%
     
-    	if(session.getAttribute("role") != "User"){
+    	if(session.getAttribute("role") != "User")
+    	{
+    		application.setAttribute("errMsg","Pls Login First as User !!");
     		response.sendRedirect("../index.jsp");
     	}
 %>
@@ -17,8 +20,31 @@
 </style>
 
 <link rel="stylesheet" href="https://maxcdn.icons8.com/fonts/line-awesome/1.1/css/line-awesome-font-awesome.min.css">
+<%
+		if(application.getAttribute("errMsg") != null)
+		{
+	%>
+<div class="alert alert-danger alert-dismissible fade show m-0 text-center"
+	role="alert">
+	<%=application.getAttribute("errMsg") %>
+</div>
+<%
+	application.setAttribute("errMsg",null);
+		}%>
+<% 
+if(application.getAttribute("successMsg") != null )
+{
+%>
+<div class="alert alert-success alert-dismissible fade show m-0 text-center"
+	role="alert">
+	<%=application.getAttribute("successMsg") %>
+</div>
+<%
+application.setAttribute("successMsg",null);
 
- <div class="marks d-flex flex-row-reverse m-2"> <a href="../markattendance.jsp"><button class="btn btn-success">Mark Attendance</button></a></div>
+} %>
+
+ <div class="marks d-flex flex-row-reverse m-2"> <a href='<%=request.getContextPath()+"/markattendance.jsp" %>'><button class="btn btn-success">Mark Attendance</button></a></div>
  <div class="container">
  <div class="p-5">
   <h2 class="mb-4">Calendar</h2>
@@ -45,20 +71,26 @@
 	</div>
 <%
 Attendance att=null;
-	try{
-		
-	//String leaveType=request.getParameter("ltype");
-	Connection con=ConnectionProvider.getConnection();
-	PreparedStatement ps=con.prepareStatement("select * from leave_details where username=?");
-	ps.setString(1,(String) session.getAttribute("uname"));
-	ResultSet rs=ps.executeQuery();
-	rs.next();
-	
-	att=new Attendance(rs.getInt(1),rs.getString(2),null,rs.getInt(3),rs.getInt(4),rs.getInt(5));
+	try
+	{
+		//String leaveType=request.getParameter("ltype");
+		if(session.getAttribute("uname") != null)
+		{
+			Connection con=ConnectionProvider.getConnection();
+			PreparedStatement ps=con.prepareStatement("select * from leave_details where username=?");
+			ps.setString(1,(String) session.getAttribute("uname"));
+			ResultSet rs=ps.executeQuery();
+			rs.next();
+			att=new Attendance(rs.getInt(1),rs.getString(2),null,rs.getInt(3),rs.getInt(4),rs.getInt(5));
+		}
+		else
+		{
+    		application.setAttribute("errMsg","Pls Login First as User !!");
+			response.sendRedirect("index.jsp");
+		}
 	}
 catch(Exception e)
 {
-	out.print("login krle bsdk");
 	e.printStackTrace();
 }
 
@@ -66,7 +98,7 @@ catch(Exception e)
 <div id="modal-view-event-add" class="modal modal-top fade calendar-modal">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <form id="add-event" action="../requestleave.jsp" method="get">
+      <form id="add-event" action='<%= request.getContextPath()+"/requestleave.jsp"%>' method="get">
         <div class="modal-body">
         <input type="hidden" id="current_date" name="current_date">
         <h4>Request for leave</h4>             

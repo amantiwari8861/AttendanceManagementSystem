@@ -1,11 +1,10 @@
-<%@page import="com.nobious.dao.LoginDao"%>
 <%@page import="java.io.IOException"%>
 <%@page import="com.nobious.bean.User"%>
-<%@page import="com.nobious.bean.LoginBean"%>
 <%@page import="com.nobious.dao.impl.AdminDaoImpl"%>
 <%@page import="com.nobious.dao.AdminDao"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
+<%@page errorPage="error.jsp" %>
 
 <!DOCTYPE html>
 <html>
@@ -25,114 +24,53 @@
 <body>
 
 	<%
-		String uname=request.getParameter("uname1");
-		String pass=request.getParameter("pass1");
-		LoginBean loginbean=new LoginBean();
-		loginbean.setUserName(uname);
-		loginbean.setPassword(pass);
-		AdminDao dao=new AdminDaoImpl();
-		
+	String uname = request.getParameter("uname1");
+	String pass = request.getParameter("pass1");
+	AdminDao dao = new AdminDaoImpl();
 
-		try
-		
-		    {
-		
-		        String Validateuser = LoginDao.authenticateUser(loginbean);
-		
-		 
-			        if(Validateuser.equals("Admin_Role"))
-		
-		        {
-		
-		          session.setAttribute("uname",uname);
-				session.setAttribute("role","Admin");
-		            session.setAttribute("Admin", uname); //setting session attribute
-		
-		            request.setAttribute("userName", uname);
-		
-		 
-		
-		            request.getRequestDispatcher("AWelcome.jsp").forward(request, response);
-		
-		        }
-		
-		        
-		
-		        else if(Validateuser.equals("User_Role"))
-		
-		        {
-			          session.setAttribute("uname",uname);
-						session.setAttribute("role","User");
-		
-		            System.out.println("User's Home");
-		
-		 
-		
-		            session.setMaxInactiveInterval(10*60);
-			            session.setAttribute("User", uname);
-		
-		            request.setAttribute("userName", uname);
-		
-		 
-		
-		            request.getRequestDispatcher("UWelcome.jsp").forward(request, response);
-		
-		        }
-		
-		        else
-		
-		        {
-		
-		            System.out.println("Error message = "+Validateuser);
-			            request.setAttribute("errMessage", Validateuser);
-		
-		 
-	
-		            //request.getRequestDispatcher("Login.jsp").forward(request, response);
-		
-		        }
-	
-		    }
-		
-		    catch (IOException e1)
-		
-		    {
-		
-		        e1.printStackTrace();
-		
-		    }
-		
-		    catch (Exception e2)
-		
-		    {
-		
-		        e2.printStackTrace();
-		
-		    }
-		
-			
+	try
+
+	{
+
+		String Validateuser = dao.validateUser(uname, pass);
+
+		if(Validateuser==null)
+		{
+			application.setAttribute("errMsg","invalid credentials");
+			request.getRequestDispatcher("index.jsp").forward(request, response);
+		}
+		else if (Validateuser.equals("Admin")) 
+		{
+			session.setAttribute("uname", uname);
+			session.setAttribute("role", "Admin");
+			session.setAttribute("Admin", uname); //setting session attribute
+			session.setMaxInactiveInterval(30 * 60);
+			request.setAttribute("userName", uname);
+			request.getRequestDispatcher("AWelcome.jsp").forward(request, response);
+
+		}
+
+		else if (Validateuser.equals("User"))
+
+		{
+			session.setAttribute("uname", uname);
+			session.setAttribute("role", "User");
+			session.setMaxInactiveInterval(30 * 60);
+			session.setAttribute("User", uname);
+
+			request.setAttribute("userName", uname);
+
+			request.getRequestDispatcher("UWelcome.jsp").forward(request, response);
+
+		}
+
+	}
+	catch (Exception e2)
+	{
+		e2.printStackTrace();
+
+	}
 	%>
-
-
-
-
-
-
-
-
 
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-

@@ -87,8 +87,13 @@ jQuery(document).ready(function(){
 				let selected_date=this[0].getAttribute("data-date");
 				document.querySelector("#current_date").value=selected_date;
 					//console.log(this[0].getAttribute("data-date"));
-				
-				jQuery('#modal-view-event-add').modal();
+					let today=new Date(new Date().getFullYear()+"/"+(new Date().getMonth()+1)+"/"+new Date().getDate());
+					let sel=new Date(selected_date);
+				console.log(!(sel<today));
+				if(!(sel<=today))
+				{
+					jQuery('#modal-view-event-add').modal();
+				}
 			},
 			eventClick: function(event, jsEvent, view) {
 			        jQuery('.event-icon').html("<i class='fa fa-"+event.icon+"'></i>");

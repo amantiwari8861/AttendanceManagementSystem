@@ -3,8 +3,16 @@
 <%@page import="com.nobious.dao.AdminDao"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
+<%@page errorPage="error.jsp" %>
 
-
+ <%
+    
+    	if(session.getAttribute("role") != "Admin"){
+    		
+    		application.setAttribute("errMsg","Pls Login First as Admin !!");
+    		request.getRequestDispatcher("index.jsp").forward(request,response);
+    	}
+    %>
 
 <%
 		int id=Integer.parseInt(request.getParameter("id"));
