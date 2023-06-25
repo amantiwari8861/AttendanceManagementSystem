@@ -1,14 +1,14 @@
 -- show databases;
--- create database jdbc;
+create database jdbc;
 use jdbc;
 create table users(user_id int primary key auto_increment,name varchar(255),
 email varchar(250) not null unique,Phoneno bigint,password varchar(255),Date_Created timestamp default current_timestamp,
 Date_updated timestamp default current_timestamp); 
-drop table users;
-insert into users(name,email,phoneno,password) values("poojasharma29","pj",98987878,"12345");
-truncate users;
-delete from login_details where username="poojasharma29";
-select * from login_details;
+-- drop table users;
+-- insert into users(name,email,phoneno,password) values("poojasharma29","pj",98987878,"12345");
+-- truncate users;
+-- delete from login_details where username="poojasharma29";
+-- select * from login_details;
 create table login_details(username varchar(250) primary key,password varchar(250) not null,role varchar(250) not null);
 -- insert into login_details(username,password,role) values("poojasharma29","12345","User");
 insert into login_details(username,password,role) values("amantiwari8861","1234","Admin");
