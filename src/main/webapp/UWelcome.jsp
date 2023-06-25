@@ -1,4 +1,7 @@
 
+<%@page import="java.util.List"%>
+<%@page import="com.nobious.dao.impl.AdminDaoImpl"%>
+<%@page import="com.nobious.dao.AdminDao"%>
 <%@page errorPage="error.jsp" %>
 <!DOCTYPE html>
 <html>
@@ -48,7 +51,21 @@
 	<%@include file="components/navbar.jsp"%>
 	
 	<%
-	
+		AdminDao dao=new AdminDaoImpl();
+		List<Object[]> leave_details=dao.getAcknowledgement((String)session.getAttribute("uname"));
+		
+		for(Object[] data:leave_details)
+		{
+			if((boolean)data[1]==true)
+			{
+				%>
+				<div class="alert alert-success alert-dismissible fade show" role="alert">
+				your <%=data[2]%> of <%=data[0]%> is Approved 🥳!!
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>
+				<%
+			}
+		}
 	
 	%>
 	

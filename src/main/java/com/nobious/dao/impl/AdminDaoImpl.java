@@ -6,6 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 
 import com.nobious.bean.Attendance;
 import com.nobious.bean.Leave;
@@ -456,6 +457,30 @@ public class AdminDaoImpl implements AdminDao
 			}
 		}
 		return false;
+	}
+	@Override
+	public List<Object[]> getAcknowledgement(String username) {
+
+		try 
+		{
+			PreparedStatement ps = con.prepareStatement("select ldate,is_approved,leave_type from leave_request where username=?;");
+			ps.setString(1, username);
+			ResultSet rs = ps.executeQuery();
+			List<Object[]> leave_details=new ArrayList<>();
+			while(rs.next())
+			{
+				Object[] leave={rs.getString(1),rs.getBoolean(2),rs.getString(3)};
+				leave_details.add(leave);
+			}
+			con.close();
+			return leave_details;
+		} 
+		catch (SQLException e) 
+		{
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 
 }

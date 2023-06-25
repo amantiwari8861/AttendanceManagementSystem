@@ -1,6 +1,7 @@
 package com.nobious.dao;
 
 import java.util.ArrayList;
+import java.util.List;
 import com.nobious.bean.Attendance;
 import com.nobious.bean.Leave;
 import com.nobious.bean.User;
@@ -18,6 +19,6 @@ public interface AdminDao
 	ArrayList<Leave> getLeaveDetails(String username);
 	boolean approveLeaveTransaction(String username,String leaveType,String date);
 	boolean disApproveLeaveTransaction(String username,String leaveType,String date);
-
+	List<Object[]> getAcknowledgement(String username);
 	
 }
