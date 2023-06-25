@@ -14,8 +14,6 @@ public interface AdminDao
 	ArrayList<User> getAllUsers();
 	ArrayList<Attendance> getAllAttendance();
 	ArrayList<Object[]> getAllLeaveRequest();
-//	boolean approveRequest(String username,String date) throws SQLException;
-//	boolean disApproveRequest(String username,String date) throws SQLException;
 	ArrayList<Leave> getAllLeaveDetails();
 	ArrayList<Leave> getLeaveDetails(String username);
 	boolean approveLeaveTransaction(String username,String leaveType,String date);
