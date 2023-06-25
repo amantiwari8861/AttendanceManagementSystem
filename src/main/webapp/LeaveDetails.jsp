@@ -8,6 +8,8 @@
 <%@page import="com.nobious.dao.impl.ConnectionProvider"%>
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
+	<%@page errorPage="error.jsp" %>
+	
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,6 +24,7 @@
 <%
     
     	if(session.getAttribute("role") != "Admin"){
+    		application.setAttribute("errMsg","Pls Login First as Admin !!");
     		response.sendRedirect("index.jsp");
     	}
     %>

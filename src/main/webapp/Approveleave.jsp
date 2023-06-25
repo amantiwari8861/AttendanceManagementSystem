@@ -8,6 +8,8 @@
 <%@page import="com.nobious.dao.impl.ConnectionProvider"%>
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
+	<%@page errorPage="error.jsp" %>
+	
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -18,22 +20,24 @@
 <title>Approve Leave</title>
 <link rel="stylesheet" type="text/css"	href="https://cdn.datatables.net/v/bs4-4.6.0/dt-1.12.1/datatables.min.css" />
 <%@include file="components/allcsscdn.jsp"%>
-<%
+   <%
     
     	if(session.getAttribute("role") != "Admin"){
-    		response.sendRedirect("index.jsp");
+    		
+    		application.setAttribute("errMsg","Pls Login First as Admin !!");
+    		request.getRequestDispatcher("index.jsp").forward(request,response);
     	}
 AdminDao dao=new AdminDaoImpl();
     %>
     <script type="text/javascript">
 
-    function approve(req_id,username,ltype)
+    function approve(username,date,ltype)
     {
-    	location.href=`ApproveOrDisapprove.jsp?req_id=${req_id}&username=${username}&status=approve&ltype=${ltype}`;
+    	location.href=`ApproveOrDisapprove.jsp?username=${username}&date=${date}&status=approve&ltype=${ltype}`;
     }
-    function disApprove(req_id,username,ltype)
+    function disApprove(username,date,ltype)
     {
-    	location.href=`ApproveOrDisapprove.jsp?req_id=${req_id}&username=${username}&status=disapprove&ltype=${ltype}`;
+    	location.href=`ApproveOrDisapprove.jsp?username=${username}&date=${date}&status=disapprove&ltype=${ltype}`;
     }
     
     </script>
@@ -69,8 +73,8 @@ AdminDao dao=new AdminDaoImpl();
 					<td><%=att[2]%></td>
 					<td><%=att[3]%></td>
 					<td><%=att[4]%></td>
-					<td><button type="button" onclick="approve('<%=(String)att[1] %>','<%=String.valueOf(att[2]) %>','<%=String.valueOf(att[4]) %>')" >Accept</button>
-					 <button type="button" onclick="disApprove('<%=(String)att[1] %>','<%=String.valueOf(att[2]) %>','<%=String.valueOf(att[4]) %>')" >Reject</button></td>
+					<td><button type="button" class="btn btn-primary" onclick="approve('<%=(String)att[1] %>','<%=String.valueOf(att[2]) %>','<%=String.valueOf(att[4]) %>')" >Accept</button>
+					 <button type="button" class="btn btn-danger" onclick="disApprove('<%=(String)att[1] %>','<%=String.valueOf(att[2]) %>','<%=String.valueOf(att[4]) %>')" >Reject</button></td>
 					
 				</tr>
 				<%}%>

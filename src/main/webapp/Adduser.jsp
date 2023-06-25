@@ -1,3 +1,5 @@
+<%@page errorPage="error.jsp" %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -29,6 +31,8 @@
 <%
     
     	if(session.getAttribute("role") != "Admin"){
+    		application.setAttribute("errMsg","Pls Login First as Admin !!");
+
     		response.sendRedirect("index.jsp");
     	}
     %>
@@ -52,6 +56,10 @@
             <div class="mb-3">
                 <label for="phoneno" class="form-label">Phone Number:</label>
                 <input type="tel" class="form-control" id="phoneno" name="phoneno" required>
+            </div>
+            <div class="mb-3">
+                <label for="pass" class="form-label">Password:</label>
+                <input type="password" class="form-control" id="pass" name="pass" required>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
         </form>

@@ -5,6 +5,7 @@
 <%@page import="com.nobious.dao.UserDao"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
+ <%@page errorPage="error.jsp" %>
  
 <!DOCTYPE html>
 <html>
@@ -20,12 +21,22 @@
     ></script>
 </head>
 <body>
+	
+		 <%
+    
+    	if(session.getAttribute("role") != "Admin"){
+    		
+    		application.setAttribute("errMsg","Pls Login First as Admin !!");
+    		request.getRequestDispatcher("index.jsp").forward(request,response);
+    	}
+    %>
 		<%
 		int id = Integer.parseInt(request.getParameter("uid"));
 		String name = request.getParameter("name");
 		String email = request.getParameter("email");
 		Long phoneno = Long.parseLong(request.getParameter("phoneno"));
-		User s=new User(id, name, email, phoneno);
+		String password =request.getParameter("pass");
+		User s=new User(id, name, email, phoneno,password);
 		AdminDao dao=new AdminDaoImpl();
 		dao.updateUser(s);
 		response.sendRedirect("Allusers.jsp");

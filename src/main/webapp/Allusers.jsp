@@ -8,6 +8,8 @@
 <%@page import="com.nobious.dao.impl.ConnectionProvider"%>
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
+	<%@page errorPage="error.jsp" %>
+	
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -22,6 +24,7 @@
 <%
     
     	if(session.getAttribute("role") != "Admin"){
+    		application.setAttribute("errMsg","Pls Login First as Admin !!");
     		response.sendRedirect("index.jsp");
     	}
     %>
@@ -42,6 +45,7 @@
 					<th>ID</th>
 					<th>Name</th>
 					<th>Email</th>
+					<th>Password</th>
 					<th>Phone No</th>
 					<th>Actions</th>
 
@@ -55,6 +59,7 @@
 					<td><%=user.getUserId()%></td>
 					<td><%=user.getName()%></td>
 					<td><%=user.getEmail()%></td>
+					<td><%=user.getPassword()%></td>
 					<td><%=user.getPhoneno()%></td>
 					<td><a href='#' data-bs-toggle="modal"
 						data-bs-target="#edituser" data-bs-userid='<%=user.getUserId()%>'>Edit</a>
@@ -68,6 +73,7 @@
 					<th>ID</th>
 					<th>Name</th>
 					<th>Email</th>
+					<th>Password</th>
 					<th>Phone No.</th>
 					<th>Actions</th>
 				</tr>
@@ -97,8 +103,12 @@
 							</div>
 							<input type='hidden' name='uid' id='hiddenid'>
 							<div class="formgroup">
-								<label for="text" class="form-label">Email</label> <input
+								<label for="email" class="form-label">Email</label> <input
 									type="email" name="email" class="form-control" id="email">
+							</div>
+							<div class="formgroup">
+								<label for="pass" class="form-label">Password</label> <input
+									type="password" name="pass" class="form-control" id="pass">
 							</div>
 							<div class="formgroup">
 								<label for="tel" class="form-label">Phone</label> <input

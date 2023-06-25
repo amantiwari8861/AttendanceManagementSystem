@@ -8,6 +8,8 @@
 <%@page import="com.nobious.dao.impl.ConnectionProvider"%>
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
+	<%@page errorPage="error.jsp" %>
+	
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -19,10 +21,12 @@
 <!-- <link rel="stylesheet" type="text/css"	href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.0/css/bootstrap.min.css" /> -->
 <link rel="stylesheet" type="text/css"	href="https://cdn.datatables.net/v/bs4-4.6.0/dt-1.12.1/datatables.min.css" />
 <%@include file="components/allcsscdn.jsp"%>
-<%
+   <%
     
     	if(session.getAttribute("role") != "Admin"){
-    		response.sendRedirect("index.jsp");
+    		
+    		application.setAttribute("errMsg","Pls Login First as Admin !!");
+    		request.getRequestDispatcher("index.jsp").forward(request,response);
     	}
     %>
 </head>

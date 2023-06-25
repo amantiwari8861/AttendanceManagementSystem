@@ -8,6 +8,8 @@
 <%@page import="com.nobious.dao.impl.ConnectionProvider"%>
 <%@ page language="java" contentType="text/html; charset=utf-8"
 	pageEncoding="utf-8"%>
+	<%@page errorPage="error.jsp" %>
+	
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <!DOCTYPE html>
 <html lang="en">
@@ -34,8 +36,9 @@
 	<div class="container">
 		<br> <br>
 		<table id="mytable" class="table table-striped" style="width: 100%">
-		<% AdminDao dao=new AdminDaoImpl();
-   			 ArrayList<Leave> list=dao.getLeaveDetails();%>
+		<% 
+			AdminDao dao=new AdminDaoImpl();
+   			 ArrayList<Leave> list=dao.getLeaveDetails((String)session.getAttribute("uname"));%>
 
 			<thead>
 				<tr>

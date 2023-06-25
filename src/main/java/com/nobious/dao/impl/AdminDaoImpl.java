@@ -23,36 +23,44 @@ public class AdminDaoImpl implements AdminDao
 	{
 		try 
 		{
-			PreparedStatement ps = con.prepareStatement("insert into users(user_id,name,email,phoneno) values(?,?,?,?);");
-			ps.setInt(1, user.getUserId());
-			ps.setString(2, user.getName());
-			ps.setString(3, user.getEmail());
-			ps.setLong(4, user.getPhoneno());
-
-			
+			PreparedStatement ps = con.prepareStatement("insert into users(name,email,phoneno,password) values(?,?,?,?);");
+			ps.setString(1, user.getName());
+			ps.setString(2, user.getEmail());
+			ps.setLong(3, user.getPhoneno());
+			ps.setString(4, user.getPassword());
 			int status = ps.executeUpdate();
+
+			PreparedStatement ps3 = con.prepareStatement("insert into login_details(username,role,password) values(?,'User',?);");
+			ps3.setString(1, user.getName());
+			ps3.setString(2, user.getPassword());
+			int status3=ps3.executeUpdate();
+
+			PreparedStatement ps2 = con.prepareStatement("insert into leave_details(username) values(?);");
+			ps2.setString(1, user.getName());
+			int status2 = ps2.executeUpdate();
+
 			con.close();
-			return status>0?true:false;
+			
+			return (status>0 && status2 >0 && status3>0) ?true:false;
 		} 
 		catch (SQLException e) 
 		{
-			System.out.println("unable to insert data!");
+			System.out.println("unable to insert data or initialize the leave details table !");
 			e.printStackTrace();
 		}
 		return false;
 	}
-
-	
 	@Override
 	public boolean updateUser(User newuser) {
 
 		try 
 		{
-			PreparedStatement ps = con.prepareStatement("update users set name=?,email=?,phoneno=?,date_updated=current_timestamp() where user_id=?;");
+			PreparedStatement ps = con.prepareStatement("update users set name=?,email=?,password=?,phoneno=?,date_updated=current_timestamp() where user_id=?;");
 			ps.setString(1, newuser.getName());
 			ps.setString(2, newuser.getEmail());
-			ps.setLong(3, newuser.getPhoneno());
-			ps.setInt(4, newuser.getUserId());
+			ps.setString(3, newuser.getPassword());
+			ps.setLong(4, newuser.getPhoneno());
+			ps.setInt(5, newuser.getUserId());
 			
 			boolean status=(ps.executeUpdate()>0) ? true :false;
 			con.close();
@@ -65,7 +73,6 @@ public class AdminDaoImpl implements AdminDao
 		
 		return false;
 	}
-
 	@Override
 	public boolean deleteUser(int id) {
 
@@ -84,8 +91,6 @@ public class AdminDaoImpl implements AdminDao
 		
 		return false;
 	}
-
-	
 	@Override
 	public ArrayList<User> getAllUsers() 
 	{
@@ -97,7 +102,7 @@ public class AdminDaoImpl implements AdminDao
 			ArrayList<User> list=new ArrayList<>();
 			while(rs.next())
 			{
-				User user=new User(rs.getInt(1), rs.getString(2),rs.getString(3),rs.getLong(4));
+				User user=new User(rs.getInt(1), rs.getString(2),rs.getString(3),rs.getLong(4),rs.getString(5));
 				list.add(user);
 			}
 			con.close();
@@ -112,27 +117,28 @@ public class AdminDaoImpl implements AdminDao
 		return null;
 	}
 	@Override
-	public boolean validateUser(String uname, String pass) 
+	public String validateUser(String uname, String pass) 
 	{
 		try 
 		{
-			PreparedStatement ps = con.prepareStatement("select count(*) from alogin where uname1=? and pass1=?");
+			PreparedStatement ps = con.prepareStatement("select * from login_details where username=? and password=?");
 			ps.setString(1, uname);
 			ps.setString(2, pass);
 			ResultSet rs = ps.executeQuery();
 			
-			
 			rs.next();
-			int status=rs.getInt(1);
+			String username=rs.getString(1);
+			String role=rs.getString(3);
 			con.close();
-			return status>0 ? true :false;
+			if(username!=null)
+				return role;
 							
 		} catch (SQLException e) 
 		{
-			e.printStackTrace();
+//			e.printStackTrace();
+			return null;
 		}
-	return false;
-	
+		return null;
 	}
 	@Override
 	public ArrayList<Attendance> getAllAttendance() {
@@ -179,48 +185,31 @@ public class AdminDaoImpl implements AdminDao
 		
 		return null;
 	}
-	@Override
-	public boolean approveRequest(String username, String date) {
-		System.out.println("approved!");
-		try 
-		{
-			PreparedStatement ps = con.prepareStatement("update leave_request set is_approved=true where username=? and ldate=?;");
-			ps.setString(1, username);
-			ps.setString(2, date);
-			
-			boolean status=(ps.executeUpdate()>0) ? true :false;
-			con.close();
-			return status;
-		} 
-		catch (SQLException e) 
-		{
-			e.printStackTrace();
-		}
-		
-		
-		return false;
-	}
-	@Override
-	public boolean disApproveRequest(String username, String date) {
-		System.out.println("disapproved!");
-
-		try 
-		{
-			PreparedStatement ps = con.prepareStatement("update leave_request set is_approved=false where username=? and ldate=?;");
-			ps.setString(1, username);
-			ps.setString(2, date);
-			
-			boolean status= (ps.executeUpdate()>0) ? true :false;
-			con.close();
-			return status;
-		} 
-		catch (SQLException e) 
-		{
-			e.printStackTrace();
-		}
-		
-		return false;
-	}
+//	@Override
+//	public boolean approveRequest(String username, String date) throws SQLException 
+//	{
+//			PreparedStatement ps = con.prepareStatement("update leave_request set is_approved=true where username=? and ldate=?;");
+//			ps.setString(1, username);
+//			ps.setString(2, date);
+//			
+//			boolean status=(ps.executeUpdate()>0) ? true :false;
+//			con.close();
+//			return status;
+//	}
+//	@Override
+//	public boolean disApproveRequest(String username, String date) throws SQLException 
+//	{
+//		System.out.println("disapproved!");
+//
+//			PreparedStatement ps = con.prepareStatement("update leave_request set is_approved=false where username=? and ldate=?;");
+//			ps.setString(1, username);
+//			ps.setString(2, date);
+//			
+//			boolean status= (ps.executeUpdate()>0) ? true :false;
+//			con.close();
+//			return status;
+//		
+//	}
 	@Override
 	public ArrayList<Leave> getAllLeaveDetails() {
 		try 
@@ -253,7 +242,8 @@ public class AdminDaoImpl implements AdminDao
 			ArrayList<Leave> list=new ArrayList<>();
 			while(rs.next())
 			{
-				Leave lea=new Leave(rs.getInt(1), rs.getString(2),rs.getInt(4),rs.getInt(5), rs.getInt(6));
+				Leave lea=new Leave(rs.getInt(1), rs.getString(2),rs.getInt(3),rs.getInt(4), rs.getInt(5));
+				System.out.println(lea);
 				list.add(lea);
 			}
 			con.close();
@@ -265,4 +255,207 @@ public class AdminDaoImpl implements AdminDao
 		}
 		return null;
 	}
+	
+	@Override
+	public boolean approveLeaveTransaction(String username,String leaveType,String date)
+	{
+		try
+		{
+			con.setAutoCommit(false);
+			int rowAffected1=0,rowAffected2=0,leaveCount=0;
+				PreparedStatement ps = con.prepareStatement("update leave_request set is_approved=true where username=? and ldate=?;");
+				ps.setString(1, username);
+				ps.setString(2, date);
+				
+				rowAffected1=ps.executeUpdate();
+				if(rowAffected1==1)
+				{
+					PreparedStatement ps2=null;
+						
+					if(leaveType.equalsIgnoreCase("casual leave"))
+					{
+						PreparedStatement ps3=con.prepareStatement("select casual_leave from leave_details where username=?;");
+						ps3.setString(1, username);
+						ResultSet rs = ps3.executeQuery();
+						rs.next();
+						leaveCount=rs.getInt(1);
+						ps3.close();
+						rs.close();
+						if(leaveCount>0)
+						{
+							ps2=con.prepareStatement("update leave_details set casual_leave=?-1 where username=?;");
+						}
+						else
+						{
+							System.out.println("No leaves left");
+						}
+						
+					}
+					else if(leaveType.equalsIgnoreCase("sick leave"))
+					{
+						PreparedStatement ps3=con.prepareStatement("select sick_leave from leave_details where username=?;");
+						ps3.setString(1, username);
+						ResultSet rs = ps3.executeQuery();
+						rs.next();
+						leaveCount=rs.getInt(1);
+						ps3.close();
+						rs.close();
+						if(leaveCount>0)
+						{
+							ps2=con.prepareStatement("update leave_details set sick_leave=?-1 where username=?;");
+						}
+						else
+						{
+							System.out.println("No leaves left");
+						}
+					}
+					else if(leaveType.equalsIgnoreCase("paid leave"))
+					{
+						PreparedStatement ps3=con.prepareStatement("select earned_leave from leave_details where username=?;");
+						ps3.setString(1, username);
+						ResultSet rs = ps3.executeQuery();
+						rs.next();
+						leaveCount=rs.getInt(1);
+						ps3.close();
+						rs.close();
+						if(leaveCount>0)
+						{
+							ps2=con.prepareStatement("update leave_details set earned_leave=?-1 where username=?;");
+						}
+						else
+						{
+							System.out.println("No leaves left");
+						}
+					}
+					ps2.setInt(1, leaveCount);
+					ps2.setString(2, username);
+					rowAffected2 = ps2.executeUpdate();
+					ps2.close();
+				}
+				if(rowAffected1==rowAffected2)
+				{					
+					con.commit();
+					con.setAutoCommit(true);
+					return true;
+				}
+				else
+				{
+					con.rollback();
+					con.setAutoCommit(true);
+					return false;
+				}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			try {
+				con.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean disApproveLeaveTransaction(String username,String leaveType,String date)
+	{
+		try
+		{
+			con.setAutoCommit(false);
+			int rowAffected1=0,rowAffected2=0,leaveCount=0;
+				PreparedStatement ps = con.prepareStatement("update leave_request set is_approved=false where username=? and ldate=?;");
+				ps.setString(1, username);
+				ps.setString(2, date);
+				
+				rowAffected1=ps.executeUpdate();
+				if(rowAffected1==1)
+				{
+					PreparedStatement ps2=null;
+						
+					if(leaveType.equalsIgnoreCase("casual leave"))
+					{
+						PreparedStatement ps3=con.prepareStatement("select casual_leave from leave_details where username=?;");
+						ps3.setString(1, username);
+						ResultSet rs = ps3.executeQuery();
+						rs.next();
+						leaveCount=rs.getInt(1);
+						ps3.close();
+						rs.close();
+						if(leaveCount<10)
+						{
+							ps2=con.prepareStatement("update leave_details set casual_leave=?+1 where username=?;");
+						}
+						else
+						{
+							System.out.println("No leaves left");
+						}
+						
+					}
+					else if(leaveType.equalsIgnoreCase("sick leave"))
+					{
+						PreparedStatement ps3=con.prepareStatement("select sick_leave from leave_details where username=?;");
+						ps3.setString(1, username);
+						ResultSet rs = ps3.executeQuery();
+						rs.next();
+						leaveCount=rs.getInt(1);
+						ps3.close();
+						rs.close();
+						if(leaveCount<15)
+						{
+							ps2=con.prepareStatement("update leave_details set sick_leave=?+1 where username=?;");
+						}
+						else
+						{
+							System.out.println("No leaves left");
+						}
+					}
+					else if(leaveType.equalsIgnoreCase("paid leave"))
+					{
+						PreparedStatement ps3=con.prepareStatement("select earned_leave from leave_details where username=?;");
+						ps3.setString(1, username);
+						ResultSet rs = ps3.executeQuery();
+						rs.next();
+						leaveCount=rs.getInt(1);
+						ps3.close();
+						rs.close();
+						if(leaveCount<15)
+						{
+							ps2=con.prepareStatement("update leave_details set earned_leave=?+1 where username=?;");
+						}
+						else
+						{
+							System.out.println("No leaves left");
+						}
+					}
+					ps2.setInt(1, leaveCount);
+					ps2.setString(2, username);
+					rowAffected2 = ps2.executeUpdate();
+					ps2.close();
+				}
+				if(rowAffected1==rowAffected2)
+				{					
+					con.commit();
+					con.setAutoCommit(true);
+					return true;
+				}
+				else
+				{
+					con.rollback();
+					con.setAutoCommit(true);
+					return false;
+				}
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+			try {
+				con.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		}
+		return false;
+	}
+
 }

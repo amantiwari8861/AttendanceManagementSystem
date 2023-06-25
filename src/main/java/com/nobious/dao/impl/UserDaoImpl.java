@@ -1,6 +1,7 @@
 package com.nobious.dao.impl;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -41,6 +42,48 @@ public class UserDaoImpl implements UserDao
 	@Override
 	public Attendance getAttendanceByUsername(String username) {
 		return null;
+	}
+	@Override
+	public boolean approveLeave(String username, String leaveType) {
+
+		PreparedStatement ps=null;
+		try 
+		{
+			
+			ps=con.prepareStatement("call approveLeave(?,?)");
+			ps.setString(1,username);
+			ps.setString(2,leaveType);
+			int status=ps.executeUpdate();
+			con.close();
+			return status>0?true:false;
+					
+		}
+		catch (Exception e) {
+
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+	@Override
+	public boolean disApproveLeave(String username, String leaveType) {
+
+		PreparedStatement ps=null;
+		try
+		{
+			ps=con.prepareStatement("call disApproveLeave(?,?)");
+			ps.setString(1,username);
+			ps.setString(2,leaveType);
+			int status=ps.executeUpdate();
+			con.close();
+			return status>0?true:false;
+		}
+		catch (Exception e) 
+		{
+			e.printStackTrace();
+		}
+		
+		return false;
 	}
 	
 	
